@@ -1,13 +1,14 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { FaDollarSign } from 'react-icons/fa';
 
-// Helper function to generate random dates
+// Move the helper functions outside the component
 const generateRandomDate = (start: Date, end: Date) => {
   const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
   return date.toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' });
 };
 
-// Updated helper function for categories with correct styling
 const getRandomCategory = () => {
   const categories = [
     { 
@@ -29,33 +30,23 @@ const getRandomCategory = () => {
   return categories[Math.floor(Math.random() * categories.length)];
 };
 
-// Updated dummy data
-const dummyData = Array.from({ length: 7 }, (_, i) => ({
-  id: i + 1,
-  transaction: ['Payment', 'Refund', 'Purchase', 'Salary', 'Subscription', 'Dining', 'Transfer'][i % 7],
-  amount: Math.random() > 0.5 ? `+$${(Math.random() * 1000).toFixed(2)}` : `-$${(Math.random() * 500).toFixed(2)}`,
-  date: generateRandomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()),
-  category: getRandomCategory()
-})).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-const EditIcon = () => (
+// Add these icon components at the top of your file, after the imports
+const DownloadIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <path 
-      d="M2.3954 15.0953C2.43368 14.7507 2.45283 14.5784 2.50496 14.4174C2.55121 14.2745 2.61656 14.1386 2.69923 14.0132C2.79241 13.8719 2.91499 13.7493 3.16014 13.5042L14.1654 2.49895C15.0859 1.57847 16.5782 1.57848 17.4987 2.49895C18.4192 3.41942 18.4192 4.91181 17.4987 5.83228L6.49347 16.8375C6.24832 17.0827 6.12574 17.2052 5.98444 17.2984C5.85907 17.3811 5.72311 17.4464 5.58024 17.4927C5.4192 17.5448 5.24691 17.564 4.90234 17.6023L2.08203 17.9156L2.3954 15.0953Z" 
-      stroke="#475467" 
-      strokeWidth="1.66667" 
+    <path d="M17.5 12.5V15.8333C17.5 16.2754 17.3244 16.6993 17.0118 17.0118C16.6993 17.3244 16.2754 17.5 15.8333 17.5H4.16667C3.72464 17.5 3.30072 17.3244 2.98816 17.0118C2.67559 16.6993 2.5 16.2754 2.5 15.8333V12.5M5.83333 8.33333L10 12.5M10 12.5L14.1667 8.33333M10 12.5V2.5" 
+      stroke="#344054" 
+      strokeWidth="1.67" 
       strokeLinecap="round" 
       strokeLinejoin="round"
     />
   </svg>
 );
 
-const DownloadIcon = () => (
+const EditIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <path 
-      d="M6.66797 14.1667L10.0013 17.5M10.0013 17.5L13.3346 14.1667M10.0013 17.5V10M16.668 13.9524C17.6859 13.1117 18.3346 11.8399 18.3346 10.4167C18.3346 7.88536 16.2826 5.83333 13.7513 5.83333C13.5692 5.83333 13.3989 5.73833 13.3064 5.58145C12.2197 3.73736 10.2133 2.5 7.91797 2.5C4.46619 2.5 1.66797 5.29822 1.66797 8.75C1.66797 10.4718 2.36417 12.0309 3.49043 13.1613" 
-      stroke="#344054" 
-      strokeWidth="1.66667" 
+    <path d="M14.9998 2.5L17.4998 5M2.5 17.5L2.83592 15.4227C2.91693 14.8029 3.20608 14.2318 3.65847 13.7917L13.3336 4.16667L15.8336 6.66667L6.15847 16.2917C5.71817 16.7264 5.1433 17.0073 4.51772 17.0773L2.5 17.5Z" 
+      stroke="#667085" 
+      strokeWidth="1.67" 
       strokeLinecap="round" 
       strokeLinejoin="round"
     />
@@ -63,6 +54,29 @@ const DownloadIcon = () => (
 );
 
 export default function Table() {
+  // Use state to store the table data
+  const [tableData, setTableData] = useState<any[]>([]);
+
+  // Generate data only once when component mounts on client side
+  useEffect(() => {
+    const generateTableData = () => {
+      return Array.from({ length: 7 }, (_, i) => ({
+        id: i + 1,
+        transaction: ['Payment', 'Refund', 'Purchase', 'Salary', 'Subscription', 'Dining', 'Transfer'][i % 7],
+        amount: Math.random() > 0.5 ? `+$${(Math.random() * 1000).toFixed(2)}` : `-$${(Math.random() * 500).toFixed(2)}`,
+        date: generateRandomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()),
+        category: getRandomCategory()
+      })).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    };
+
+    setTableData(generateTableData());
+  }, []);
+
+  // Show loading state or empty table while data is being generated
+  if (tableData.length === 0) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="overflow-hidden bg-white rounded-lg border border-[#E4E7EC]">
       <div className="p-4 sm:p-6 border-b border-[#E4E7EC]">
@@ -103,7 +117,7 @@ export default function Table() {
               </tr>
             </thead>
             <tbody>
-              {dummyData.map((item) => (
+              {tableData.map((item) => (
                 <tr key={item.id} className="group hover:bg-gray-50">
                   <td className="py-4 px-6 border-b">
                     <div className="flex items-center gap-3 min-w-[200px]">
