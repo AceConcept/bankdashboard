@@ -1,9 +1,4 @@
-import type { Config } from 'tailwindcss'
-
-// Add type for the plugin function
-interface PluginAPI {
-  addComponents: (components: Record<string, any>) => void;
-}
+import type { Config } from "tailwindcss";
 
 const config: Config = {
     darkMode: ["class"],
@@ -72,14 +67,11 @@ const config: Config = {
   				'0px -2px 0px 0px rgba(16, 24, 40, 0.05) inset, ' +
   				'0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
   		},
-  		fontFamily: {
-  			'prosto-one': ['var(--font-prosto-one)'],
-  		},
   	}
   },
   plugins: [
     require("tailwindcss-animate"),
-    function({ addComponents }: PluginAPI) {
+    function({ addComponents }) {
       addComponents({
         '.btn-custom': {
           borderRadius: '8px',

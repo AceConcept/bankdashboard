@@ -53,19 +53,58 @@ const EditIcon = () => (
   </svg>
 );
 
+// Define an interface for your table data
+interface TableRow {
+  id: number;
+  transactionId: string;
+  transaction: string;
+  date: string;
+  amount: string;
+  time: string;
+  type: string;
+  category: {
+    name: string;
+    color: string;
+    dotColor: string;
+  };
+  status: 'In Progress' | 'Completed' | 'Failed';
+}
+
 export default function Table() {
-  // Use state to store the table data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [tableData, setTableData] = useState<any[]>([]);
 
   // Generate data only once when component mounts on client side
   useEffect(() => {
+    const generateRandomTransactionId = () => {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      let result = '#';
+
+      for (let i = 0; i < 4; i++) {
+        result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+      }
+      for (let i = 0; i < 2; i++) {
+        result += letters.charAt(Math.floor(Math.random() * letters.length));
+      }
+      for (let i = 0; i < 6; i++) {
+        result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+      }
+
+      return result;
+    };
+
     const generateTableData = () => {
       return Array.from({ length: 7 }, (_, i) => ({
         id: i + 1,
+        transactionId: generateRandomTransactionId(),
         transaction: ['Payment', 'Refund', 'Purchase', 'Salary', 'Subscription', 'Dining', 'Transfer'][i % 7],
-        amount: Math.random() > 0.5 ? `+$${(Math.random() * 1000).toFixed(2)}` : `-$${(Math.random() * 500).toFixed(2)}`,
         date: generateRandomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()),
-        category: getRandomCategory()
+        amount: Math.random() > 0.5 ? `+$${(Math.random() * 1000).toFixed(2)}` : `-$${(Math.random() * 500).toFixed(2)}`,
+        time: generateRandomDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), new Date()),
+        type: ['Payment', 'Refund', 'Purchase', 'Salary', 'Subscription', 'Dining', 'Transfer'][i % 7],
+        category: getRandomCategory(),
+        status: ['In Progress', 'Completed', 'Failed'][i % 3]
       })).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     };
 
@@ -78,8 +117,8 @@ export default function Table() {
   }
 
   return (
-    <div className="overflow-hidden bg-white rounded-lg border border-[#E4E7EC]">
-      <div className="p-4 sm:p-6 border-b border-[#E4E7EC]">
+    <div>
+      <div className="mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-lg sm:text-xl font-semibold text-[#344054]">Recent Activity</h2>
           <div className="flex items-center gap-2">
@@ -94,73 +133,81 @@ export default function Table() {
         </div>
       </div>
       
-      <div className="overflow-x-auto">
-        <div className="min-w-[600px] sm:min-w-0">
-          <table className="w-full">
-            <thead className="bg-white sticky top-0 z-10">
-              <tr>
-                <th className="py-3 px-6 border-b text-left text-xs font-medium font-inter text-[#475467] w-[40%]">
-                  Transaction
-                </th>
-                <th className="py-3 px-6 border-b text-left text-xs font-medium font-inter text-[#475467] w-[15%]">
-                  Amount
-                </th>
-                <th className="py-3 px-6 border-b text-left text-xs font-medium font-inter text-[#475467] w-[20%]">
-                  Date
-                </th>
-                <th className="py-3 px-6 border-b text-left text-xs font-medium font-inter text-[#475467] w-[20%]">
-                  Category
-                </th>
-                <th className="py-3 px-6 border-b text-xs font-medium font-inter text-[#475467] w-[5%]">
-                  {/* Actions */}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((item) => (
-                <tr key={item.id} className="group hover:bg-gray-50">
-                  <td className="py-4 px-6 border-b">
-                    <div className="flex items-center gap-3 min-w-[200px]">
-                      <div className="w-10 h-10 flex items-center justify-center rounded-full border border-black/[0.08] flex-shrink-0">
-                        <FaDollarSign className="w-5 h-5 text-gray-600" />
-                      </div>
-                      <span className="text-[14px] font-medium font-inter text-[#101828] leading-5 truncate">
-                        {item.transaction}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 border-b text-[14px] font-normal font-inter text-[#475467] leading-5 whitespace-nowrap">
-                    {item.amount}
-                  </td>
-                  <td className="py-4 px-6 border-b text-[14px] font-normal font-inter text-[#475467] leading-5 whitespace-nowrap">
-                    {item.date}
-                  </td>
-                  <td className="py-4 px-6 border-b">
-                    <div className="min-w-[120px]">
-                      <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 pl-1.5 rounded-2xl text-xs font-medium ${item.category.color}`}>
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          width="8" 
-                          height="8" 
-                          viewBox="0 0 8 8" 
-                          fill="none"
-                          className="w-2 h-2 flex-shrink-0"
-                        >
-                          <circle cx="4" cy="4" r="3" fill={item.category.dotColor} />
-                        </svg>
-                        {item.category.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 border-b text-center">
-                    <button className="hover:opacity-80">
-                      <EditIcon />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="overflow-hidden bg-white">
+        <div className="overflow-x-auto">
+          <div>
+            <div>
+              <table className="table-fixed w-[1136px]">
+                <thead className="bg-[#F8F8F8]">
+                  <tr>
+                    <th className="text-left w-[24px] px-6 py-4">
+                      <input type="checkbox" className="rounded border-gray-300 focus:outline-none focus:ring-0" />
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[125px] px-4 py-4">
+                      Transaction ID
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[125px] px-4 py-4">
+                      Transaction
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[104px] px-4 py-4">
+                      Date
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[104px] px-4 py-4">
+                      Amount
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[104px] px-4 py-4">
+                      Time
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[104px] px-4 py-4">
+                      Category
+                    </th>
+                    <th className="text-left text-xs font-medium text-[#7F7D83] w-[150px] px-6 py-4">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((item) => (
+                    <tr key={item.id} className="group hover:bg-gray-50 h-[76px]">
+                      <td className="px-6 text-sm">
+                        <div className="w-[24px]">
+                          <input type="checkbox" className="rounded border-gray-300" />
+                        </div>
+                      </td>
+                      <td className="px-4 text-sm">
+                        <div className="w-[125px]">{item.id}</div>
+                      </td>
+                      <td className="px-4 text-sm">
+                        <div className="w-[125px]">{item.transaction}</div>
+                      </td>
+                      <td className="px-4 text-sm">
+                        <div className="w-[104px]">{item.date}</div>
+                      </td>
+                      <td className="px-4 text-sm">
+                        <div className="w-[104px]">{item.amount}</div>
+                      </td>
+                      <td className="px-4 text-sm">
+                        <div className="w-[104px]">{item.time}</div>
+                      </td>
+                      <td className="px-4 text-sm">
+                        <div className="w-[104px]">{item.category.name}</div>
+                      </td>
+                      <td className="px-6 text-sm">
+                        <div className="w-[150px]">
+                          <div className="flex items-center h-[28px] px-3 gap-1.5 rounded-md border border-[#018030] w-fit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                              <circle cx="4" cy="4" r="3" fill="#018030"/>
+                            </svg>
+                            <span className="text-sm text-[#018030]">{item.status}</span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

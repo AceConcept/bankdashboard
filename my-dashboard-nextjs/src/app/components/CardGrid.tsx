@@ -12,7 +12,7 @@ interface CardGridProps {
 
 export const CardGrid: React.FC<CardGridProps> = ({ selectedPeriod, cardData, timePeriodsMap }) => {
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 w-full">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
       {cardData[selectedPeriod].map((card, index) => (
         <Card
           key={index}
