@@ -43,16 +43,16 @@ export const Graph: React.FC<GraphProps> = ({ data = sampleData, type, onTypeCha
 
   return (
     <div>
-      <div className="flex justify-between mb-6">
+      <div className="flex justify-between mb-4">
         <div>
-          <h3 className="text-[16px] text-gray-900 font-semibold mb-1">
+          <h3 className="text-[16px] max-[375px]:text-[10px] text-gray-900 font-semibold mb-1">
             Total Projected EOY Balance
           </h3>
           <div className="flex items-center gap-2">
-            <p className="text-[36px] font-semibold text-gray-900">
+            <p className="text-[36px] max-[375px]:text-lg font-semibold text-gray-900">
               $402,025.54
             </p>
-            <span className="text-[12px] font-normal font-inter text-[#018030] bg-[#E1FAEA] px-[4px] py-0 rounded-md">
+            <span className="text-[12px] max-[375px]:text-[8px] font-normal font-inter text-[#018030] bg-[#E1FAEA] px-[4px] py-0 rounded-md">
               +2.1%
             </span>
           </div>
@@ -93,134 +93,71 @@ export const Graph: React.FC<GraphProps> = ({ data = sampleData, type, onTypeCha
           </button>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={240}>
-        {type === 'bar' ? (
-          <BarChart data={monthlyData}>
-            <CartesianGrid 
-              horizontal={true}
-              vertical={false}
-              stroke="#E5E5E5"
-              count={3}
-            />
-            <XAxis 
-              dataKey="name" 
-              tick={{ fill: '#667085' }} 
-              angle={0} 
-              textAnchor="middle"
-              axisLine={{ stroke: '#E5E5E5' }}
-              tickLine={false}
-            />
-            <YAxis hide />
-            <Tooltip 
-              content={({ active, payload, label }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div style={{ 
-                      backgroundColor: '#fff',
-                      border: '1px solid #E4E7EC',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      width: '144px'
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid 
+            horizontal={true}
+            vertical={false}
+            stroke="#E5E5E5"
+          />
+          <XAxis 
+            dataKey="name" 
+            tick={{ fill: '#667085' }} 
+            angle={0} 
+            textAnchor="middle"
+            axisLine={{ stroke: '#E5E5E5' }}
+            tickLine={false}
+          />
+          <YAxis hide />
+          <Tooltip 
+            content={({ active, payload, label }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <div style={{ 
+                    backgroundColor: '#fff',
+                    border: '1px solid #E4E7EC',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    width: '144px'
+                  }}>
+                    <div style={{
+                      color: '#737373',
+                      fontSize: '12px',
+                      fontWeight: '400',
+                      marginBottom: '4px',
+                      lineHeight: '20px'
                     }}>
-                      <div style={{
-                        color: '#737373',
-                        fontSize: '12px',
-                        fontWeight: '400',
-                        marginBottom: '4px',
-                        lineHeight: '20px'
-                      }}>
-                        {`${label}, 2024`}
-                      </div>
-                      <div style={{
-                        color: '#101828',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        padding: '0',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        gap: '13px',
-                        lineHeight: '20px',
-                        margin: 0
-                      }}>
-                        <span>Income</span>
-                        <span>${payload[0].value}</span>
-                      </div>
+                      {`${label}, 2024`}
                     </div>
-                  );
-                }
-                return null;
-              }}
-              cursor={false}
-            />
-            <Bar 
-              dataKey="value" 
-              fill="#F2F4F7"
-              radius={[4, 4, 0, 0]}
-              style={{ cursor: 'pointer' }}
-              activeBar={{ fill: '#111927' }}
-            />
-          </BarChart>
-        ) : (
-          <LineChart data={monthlyData}>
-            <CartesianGrid 
-              horizontal={true}
-              vertical={false}
-              stroke="#E5E5E5"
-              count={3}
-            />
-            <XAxis 
-              dataKey="name" 
-              tick={{ fill: '#667085' }} 
-              angle={0} 
-              textAnchor="middle"
-              axisLine={{ stroke: '#E5E5E5' }}
-              tickLine={false}
-            />
-            <YAxis hide />
-            <Tooltip 
-              content={({ active, payload, label }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div style={{ 
-                      backgroundColor: '#fff',
-                      border: '1px solid #E4E7EC',
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      width: '144px'
+                    <div style={{
+                      color: '#101828',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      padding: '0',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: '13px',
+                      lineHeight: '20px',
+                      margin: 0
                     }}>
-                      <div style={{
-                        color: '#737373',
-                        fontSize: '12px',
-                        fontWeight: '400',
-                        marginBottom: '4px',
-                        lineHeight: '20px'
-                      }}>
-                        {`${label}, 2024`}
-                      </div>
-                      <div style={{
-                        color: '#101828',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        padding: '0',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        gap: '13px',
-                        lineHeight: '20px',
-                        margin: 0
-                      }}>
-                        <span>Income</span>
-                        <span>${payload[0].value}</span>
-                      </div>
+                      <span>Income</span>
+                      <span>${payload[0].value}</span>
                     </div>
-                  );
-                }
-                return null;
-              }}
-              cursor={false}
-            />
-            <Line type="monotone" dataKey="value" stroke="#004EEB" dot={false} />
-          </LineChart>
-        )}
+                  </div>
+                );
+              }
+              return null;
+            }}
+            cursor={false}
+          />
+          <Bar 
+            dataKey="value" 
+            fill="#F2F4F7"
+            radius={[4, 4, 0, 0]}
+            style={{ cursor: 'pointer' }}
+            activeBar={{ fill: '#111927' }}
+          />
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

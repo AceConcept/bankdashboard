@@ -7,10 +7,15 @@ import { Card } from './Card';
 import Table from './Table';
 import { Graph } from '../components/Graph';
 import { Header } from './Header';
+import { CardGrid } from './CardGrid';
 
 type TimePeriod = '12 months' | '30 days' | '7 days' | '24 hours';
 
-export default function Dashboard() {
+interface DashboardProps {
+  onMenuClick: () => void;
+}
+
+export default function Dashboard({ onMenuClick }: DashboardProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('30 days');
   const [graphType, setGraphType] = useState<'bar' | 'line'>('bar');
 
@@ -61,15 +66,18 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header onMenuClick={onMenuClick} />
       
-      {/* Notification Banner */}
+      {/* Notification Banner - Hidden on mobile */}
       <div className="px-6">
-        <div className="bg-[#E1FAEA] h-9 rounded-[40px] flex items-center px-3 mb-6">
+        <div className="hidden sm:flex bg-[#E1FAEA] h-9 rounded-[40px] items-center px-3 mb-6">
           <svg className="mr-2" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path fillRule="evenodd" clipRule="evenodd" d="M13.4969 1.80078C14.988 1.80078 16.1969 3.00961 16.1969 4.50078L16.1969 13.5009C16.1969 14.992 14.988 16.2009 13.4969 16.2009H4.49688C3.00571 16.2009 1.79688 14.992 1.79688 13.5009V4.50078C1.79688 3.00961 3.00571 1.80078 4.49687 1.80078H13.4969ZM8.99717 4.50085C9.49422 4.50085 9.89717 4.9038 9.89717 5.40085C9.89717 5.89791 9.49422 6.30085 8.99717 6.30085C8.50011 6.30085 8.09717 5.89791 8.09717 5.40085C8.09717 4.9038 8.50011 4.50085 8.99717 4.50085ZM8.99717 7.65085C9.49422 7.65085 9.89717 8.0538 9.89717 8.55085V12.1509C9.89717 12.6479 9.49422 13.0509 8.99717 13.0509C8.50011 13.0509 8.09717 12.6479 8.09717 12.1509V8.55085C8.09717 8.0538 8.50011 7.65085 8.99717 7.65085Z" fill="#3BBA6A"/>
           </svg>
-          <span className="text-xs flex-1">Only 2 days left to wrap up payroll! Double-check and finalize all employee details to keep things running smoothly.</span>
+          <span className="text-xs flex-1">
+            <span className="lg:hidden">Only 2 days left to wrap up payroll! Double-check and finalize...</span>
+            <span className="hidden lg:inline">Only 2 days left to wrap up payroll! Double-check and finalize all employee details to keep things running smoothly.</span>
+          </span>
           <button className="text-xs text-[#016626] underline font-semibold">MORE DETAILS</button>
           <button className="ml-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -79,19 +87,17 @@ export default function Dashboard() {
         </div>
         
         {/* Time Period Selection */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <ButtonGroup selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
         </div>
 
-        {/* Metrics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
-          {cardData[selectedPeriod].map((card, index) => (
-            <Card
-              key={index}
-              {...card}
-              timePeriod={timePeriodsMap[selectedPeriod]}
-            />
-          ))}
+        {/* Use CardGrid instead of mapping cards directly */}
+        <div className="mb-8">
+          <CardGrid 
+            selectedPeriod={selectedPeriod}
+            cardData={cardData}
+            timePeriodsMap={timePeriodsMap}
+          />
         </div>
 
         {/* Graph Component */}

@@ -75,7 +75,7 @@ const listItems = [
 
 const Sidebar = () => {
   return (
-    <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col p-5">
+    <div className="w-64 h-screen bg-[#FCFCFD] flex flex-col p-5">
       {/* Logo */}
       <div className="p-0">
         <h1 className="font-prosto-one text-2xl mb-4">Lunastra</h1>
