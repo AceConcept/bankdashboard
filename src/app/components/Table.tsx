@@ -137,7 +137,7 @@ export default function Table() {
         <div className="overflow-x-auto">
           <div>
             <div>
-              <table className="table-fixed w-[1136px]">
+              <table className="w-full min-w-[1136px]">
                 <thead className="bg-[#F8F8F8]">
                   <tr>
                     <th className="text-left w-[24px] px-6 py-4">
